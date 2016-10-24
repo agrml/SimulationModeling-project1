@@ -2,7 +2,7 @@
 #include <time.h>
 
 #define SIZE 10000
-
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 // declare assembler "function"
 unsigned long long timestamp(void);
 
@@ -11,6 +11,10 @@ double a[SIZE][SIZE];
 double b[SIZE][SIZE];
 double c[SIZE][SIZE];
 
+enum {
+    STEP = 8
+};
+
 int main(int argc, char **argv)
 {
     // start to count CPU clock cycles
@@ -18,10 +22,14 @@ int main(int argc, char **argv)
     // clip current time
     clock_t timerUtc = clock();
 
-    int j, k;
-    for (j = 0; j < SIZE; j++) {
-        for (i = 0; i < SIZE; i++) {
-            a[i][j] = b[i][j] + c[i][j];
+    int j;
+    for (i = 0; i < SIZE; i+=STEP) {
+        for (j = 0; j < SIZE; j += STEP) {
+            for (int ii = i; ii < MIN(i + STEP, SIZE); ii++) {
+                for (int jj = j; jj < MIN(j + STEP, SIZE); jj++) {
+                    a[ii][jj] = b[ii][jj] + c[ii][jj];
+                }
+            }
         }
     }
 
